@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Virtual Audio Board",
+  "version": "1.0",
+  "description": "Virtual Audio Board for WEB.",
+  "author": "Ishant Ram",
+
+  "background": {
+    "service_workes": ["src/srcipt.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"]
+    }
+  ],
+
+  "permissions": ["tabs"],
+
+  "action": {
+    "default_icon": "assets/icon.png",
+    "default_popup": "index.html",
+    "default_icons": {
+      "16": "assets/icon.png",
+      "48": "assets/icon.png",
+      "128": "assets/icon.png"
+    }
+  },
+
+  "icons": {
+    "16": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
+  }
+}
