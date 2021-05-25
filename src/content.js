@@ -1,7 +1,6 @@
 // getting the aduio and video element in webpage
 const audioelm = document.getElementsByTagName("audio");
 const videoelm = document.getElementsByTagName("video");
-let volumelevel = 50;
 
 // change volume Function
 const changeVolume = (volumelevel) => {
@@ -37,40 +36,52 @@ const muteVolume = () => {
   return;
 };
 
-const defaultState = () => {
-  // itrating over the audioelm array
+// get State Function
+const getState = () => {
+  // value array
+  const value = [];
+
+  // itrating over the audioelm array and storing the value in value array
   for (let audiodata of audioelm) {
-    // assining each element volume 1
-    audiodata.volume = 1;
+    value.push(audiodata.volume);
   }
 
-  // itrating over the videoelm array
+  // itrating over the videoelm array and storing the value in value array
   for (let videodata of videoelm) {
-    // assining each element volume 1
-    videodata.volume = 1;
+    value.push(videodata.volume);
   }
+
+  // avaraging the value
+  let avarage = 0.0;
+  for (let i = 0; i < value.length; i++) {
+    avarage += value[i];
+  }
+  avarage = avarage / value.length;
+
+  // returining the avarage
+  return avarage;
 };
+
+// ..
+let volumelevel = 50;
+let lastState = getState();
 
 // every time reciving message
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  // if message is true means audioState is on
-  if (request.message == true) {
-    // calling the defaultState Function
-    defaultState();
-
-    return;
-  }
-  // else if message is false means audioState is off
-  else if (request.message == false) {
-    // calling the muteVolume Function
+  // If message type is Volumelevel
+  if (request.message.type == "Volumelevel") {
+    volumelevel = request.message.key / 100;
+    changeVolume(volumelevel);
+  } 
+  // If message type is AudioState and key is false
+  else if (request.message.type == "AudioState" && request.message.key == false) {
+    lastState = getState();
     muteVolume();
-
-    return;
   }
-  // else assining it to volume level var by dividing it by 100
-  volumelevel = request.message / 100;
-  // calling the chageVolume Function
-  changeVolume(volumelevel);
-
+  // If message type is AudioState and key is true 
+  else if (request.message.type == "AudioState" && request.message.key) {
+    changeVolume(lastState);
+  };
+  
   return;
 });

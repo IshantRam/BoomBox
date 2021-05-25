@@ -13,7 +13,9 @@ audioState.addEventListener("click", () => {
   // sending the audioState to the content.js
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     var activeTab = tabs[0];
-    chrome.tabs.sendMessage(activeTab.id, { message: audioState.checked });
+    chrome.tabs.sendMessage(activeTab.id, {
+      message: { type: "AudioState", key: audioState.checked },
+    });
   });
 });
 
@@ -21,10 +23,17 @@ audioState.addEventListener("click", () => {
 volume.oninput = function () {
   // assining volumelevel HTML value this.value
   volumelevel.innerHTML = this.value;
+  if (this.value == 0) {
+    audioState.checked = 0;
+  } else {
+    audioState.checked = 1;
+  }
 
   // sending the volume.value to content.js
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var activeTab = tabs[0];
-    chrome.tabs.sendMessage(activeTab.id, { message: parseInt(volume.value) });
+    chrome.tabs.sendMessage(activeTab.id, {
+      message: { type: "Volumelevel", key: parseInt(volume.value) },
+    });
   });
 };
