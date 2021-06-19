@@ -13,8 +13,8 @@ const isPlayable = () => {
   return true;
 };
 
-// change volume Function
-const changeVolume = (volumelevel) => {
+// set State Function
+const setState = (volumelevel) => {
   // itrating over the audioelm array
   for (let audiodata of audioelm) {
     // assining each element volume volumelevl
@@ -25,23 +25,6 @@ const changeVolume = (volumelevel) => {
   for (let videodata of videoelm) {
     // assining each element volume volumelevl
     videodata.volume = volumelevel;
-  }
-
-  return;
-};
-
-// mute Volume Function
-const muteVolume = () => {
-  // itrating over the audioelm array
-  for (let audiodata of audioelm) {
-    // assining each element volume 0
-    audiodata.volume = 0;
-  }
-
-  // itrating over the videoelm array
-  for (let videodata of videoelm) {
-    // assining each element volume 0
-    videodata.volume = 0;
   }
 
   return;
@@ -74,7 +57,7 @@ const getState = () => {
 };
 
 // ..
-let volumelevel = 50;
+let volumelevel = getState();
 let lastState = getState();
 
 // every time reciving message
@@ -87,17 +70,19 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // If message type is Volumelevel
   if (request.message.type == "Volumelevel") {
     volumelevel = request.message.key / 100;
-    changeVolume(volumelevel);
+    setState(volumelevel);
   }
+
   // If message type is AudioState and key is false
   else if (request.message.type == "AudioState" && !request.message.key) {
     lastState = getState();
-    muteVolume();
+    setState(0);
   }
+
   // If message type is AudioState and key is true
   else if (request.message.type == "AudioState" && request.message.key) {
-    changeVolume(lastState);
-  };
+    setState(lastState);
+  }
 
   return;
 });
