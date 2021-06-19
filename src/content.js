@@ -2,6 +2,17 @@
 const audioelm = document.getElementsByTagName("audio");
 const videoelm = document.getElementsByTagName("video");
 
+// is Playable Function
+const isPlayable = () => {
+  // if audioelm.length == 0 && videoelm.length == 0
+  if (audioelm.length == 0 && videoelm.length == 0) {
+    return false;
+  }
+
+  // else
+  return true;
+};
+
 // change volume Function
 const changeVolume = (volumelevel) => {
   // itrating over the audioelm array
@@ -68,20 +79,25 @@ let lastState = getState();
 
 // every time reciving message
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  // if the page do not contains audio or video tag
+  if (!isPlayable()) {
+    return;
+  }
+
   // If message type is Volumelevel
   if (request.message.type == "Volumelevel") {
     volumelevel = request.message.key / 100;
     changeVolume(volumelevel);
-  } 
+  }
   // If message type is AudioState and key is false
-  else if (request.message.type == "AudioState" && request.message.key == false) {
+  else if (request.message.type == "AudioState" && !request.message.key) {
     lastState = getState();
     muteVolume();
   }
-  // If message type is AudioState and key is true 
+  // If message type is AudioState and key is true
   else if (request.message.type == "AudioState" && request.message.key) {
     changeVolume(lastState);
   };
-  
+
   return;
 });
