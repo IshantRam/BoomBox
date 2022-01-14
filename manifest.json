@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Virtual Audio Board",
-  "version": "1.1",
-  "description": "Virtual Audio Board for WEB.",
+  "name": "Boom Box",
+  "version": "1.5",
+  "description": "A Chrome extension for managing website audios.",
   "author": "Ishant Ram",
 
   "background": {
